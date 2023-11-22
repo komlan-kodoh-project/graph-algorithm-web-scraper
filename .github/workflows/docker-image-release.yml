@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        run: export BRANCH_NAME=${GITHUB_REF##*/}
+        run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: test-setup
         run: echo ${BRANCH_NAME}
