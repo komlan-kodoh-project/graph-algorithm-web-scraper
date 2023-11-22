@@ -23,6 +23,12 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
+      - name: Setup
+        run: export BRANCH_NAME=${GITHUB_REF##*/}
+
+      - name: test-setup
+        run: echo ${BRANCH_NAME}
+
       - name: Check out the repo
         uses: actions/checkout@v4
 
@@ -39,5 +45,5 @@ jobs:
       - name: Push Docker Image to Docker Hub
         run: |
           echo ${IMAGE_NAME}
-          docker tag docker-build-output ${IMAGE_NAME}
-          docker push ${IMAGE_NAME}
+          docker tag docker-build-output ${IMAGE_NAME}:${BRANCH_NAME}
+          docker push ${IMAGE_NAME}:${BRANCH_NAME}
