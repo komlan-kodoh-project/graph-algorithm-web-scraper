@@ -16,7 +16,7 @@ RUN ["cargo", "build", "--release"]
 RUN mv ./target/release ./output
 RUN ls
 
-FROM build-environment
+FROM alpine:3.18
 
 WORKDIR /app
 
