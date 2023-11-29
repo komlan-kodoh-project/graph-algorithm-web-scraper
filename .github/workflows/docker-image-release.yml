@@ -1,0 +1,39 @@
+name: Publish Docker image
+
+env:
+  IMAGE_NAME: ${{secrets.DOCKER_REPOSITORY_USERNAME}}/${{ github.event.repository.name }}
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  push-image-to-docker-hub:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Context Information
+        run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: test-setup
+        run: echo ${BRANCH_NAME}
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_REPOSITORY_USERNAME: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
+          DOCKER_REPOSITORY_PASSWORD: ${{ secrets.DOCKER_REPOSITORY_PASSWORD }}
+
+        run: docker login -u="${DOCKER_REPOSITORY_USERNAME}" -p="${DOCKER_REPOSITORY_PASSWORD}"
+
+      - name: Build Docker Image
+        run: docker build -t docker-build-output .
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          echo ${IMAGE_NAME}
+          docker tag docker-build-output ${IMAGE_NAME}:${BRANCH_NAME}
+          docker push ${IMAGE_NAME}:${BRANCH_NAME}
